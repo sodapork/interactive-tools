@@ -1,0 +1,136 @@
+```html
+<style>
+  * {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .container {
+    background-color: #F5F5F5;
+    padding: 10px;
+    margin: 10px 0;
+    width: 100%;
+    max-width: 800px;
+    border-radius: 5px;
+  }
+
+  .title {
+    color: #333333;
+    font-size: 24px;
+    line-height: 1.5;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .checklist {
+    list-style-type: none;
+  }
+
+  .checklist-item {
+    color: #333333;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 1.5;
+    border-bottom: 1px solid #DDDDDD;
+    padding: 10px 0;
+  }
+
+  .checklist-item .checkbox {
+    vertical-align: middle;
+  }
+
+  .reset-button {
+    background: #0071BC;
+    padding: 10px 20px;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+
+  .reset-button:disabled {
+    background: #CCCCCC;
+    cursor: not-allowed;
+  }
+
+  .tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .tooltip .tooltip-text {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+</style>
+
+<div class="container">
+  <h2 class="title">QSR Tech Checklist</h2>
+  <ul class="checklist">
+    <li class="checklist-item">
+      <input type="checkbox" id="digital-menus" class="checkbox">
+      <label for="digital-menus">Digital Menus</label>
+    </li>
+    <li class="checklist-item">
+      <input type="checkbox" id="mobile-ordering" class="checkbox">
+      <label for="mobile-ordering">Mobile Ordering</label>
+    </li>
+    <li class="checklist-item">
+      <input type="checkbox" id="drive-thru-tech" class="checkbox">
+      <label for="drive-thru-tech">Drive-Thru Tech</label>
+    </li>
+    <li class="checklist-item">
+      <input type="checkbox" id="self-service-kiosk" class="checkbox">
+      <label for="self-service-kiosk">Self-Service Kiosk</label>
+    </li>
+    <li class="checklist-item">
+      <input type="checkbox" id="loyalty-program" class="checkbox">
+      <label for="loyalty-program">Loyalty Program</label>
+    </li>
+  </ul>
+  <button id="reset-button" class="reset-button" disabled>Reset</button>
+</div>
+
+<script>
+  // Get elements
+  const checklistItems = Array.from(document.querySelectorAll('.checkbox'));
+  const resetButton = document.getElementById('reset-button');
+  
+  // Listen for changes to checkboxes
+  checklistItems.forEach(item => {
+    item.addEventListener('change', () => {
+      resetButton.disabled = !checklistItems.some(item => item.checked);
+    });
+  });
+
+  // Listen for click on reset button
+  resetButton.addEventListener('click', () => {
+    checklistItems.forEach(item => {
+      item.checked = false;
+    });
+    resetButton.disabled = true;
+  });
+</script>
+```

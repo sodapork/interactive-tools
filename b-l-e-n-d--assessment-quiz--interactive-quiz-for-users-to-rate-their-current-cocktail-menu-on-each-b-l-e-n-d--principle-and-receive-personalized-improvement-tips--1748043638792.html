@@ -1,0 +1,565 @@
+<div id="blend-quiz-widget">
+  <div class="blend-progress-wrapper">
+    <div class="blend-progress-bar" id="blend-progress-bar"></div>
+    <span class="blend-progress-text" id="blend-progress-text"></span>
+  </div>
+  <div class="blend-card" id="blend-card">
+    <!-- Quiz steps injected by JS -->
+  </div>
+</div>
+
+<style>
+#blend-quiz-widget {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: #f8fafb;
+  border-radius: 20px;
+  box-shadow: 0 6px 32px 0 rgba(34, 40, 50, 0.08), 0 1.5px 3px 0 rgba(34,40,50,0.04);
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 0 0 32px 0;
+}
+.blend-progress-wrapper {
+  position: relative;
+  background: #e7eaea;
+  border-radius: 20px 20px 0 0;
+  height: 20px;
+  overflow: hidden;
+}
+.blend-progress-bar {
+  background: linear-gradient(90deg, #23796a 50%, #a7e7d4 100%);
+  height: 100%;
+  width: 0%;
+  transition: width 0.4s cubic-bezier(.4,2,.6,1);
+}
+.blend-progress-text {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  color: #26504d;
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 600;
+}
+.blend-card {
+  background: #fff;
+  margin: 32px 24px 0 24px;
+  border-radius: 16px;
+  box-shadow: 0 1.5px 6px rgba(34,40,50,0.06);
+  padding: 32px 24px 24px 24px;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadein 0.6s cubic-bezier(.7, 0, .3, 1);
+}
+@keyframes fadein {
+  0% { opacity: 0; transform: translateY(60px);}
+  100% { opacity: 1; transform: translateY(0);}
+}
+.blend-title {
+  font-size: 1.28rem;
+  font-weight: 700;
+  color: #26504d;
+  margin-bottom: 18px;
+  letter-spacing: -0.5px;
+  text-align: center;
+}
+.blend-desc {
+  font-size: 1.03rem;
+  color: #5a6f66;
+  margin-bottom: 18px;
+  text-align: center;
+  line-height: 1.52;
+}
+.blend-radios {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 20px;
+  gap: 14px;
+}
+.blend-radio {
+  background: #f3f6f3;
+  border-radius: 8px;
+  transition: background 0.18s, box-shadow 0.2s;
+  border-left: 5px solid #a7e7d4;
+  cursor: pointer;
+  padding: 10px 16px 10px 16px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  font-size: 1rem;
+  color: #31474e;
+  position: relative;
+  min-height: 34px;
+}
+.blend-radio.selected,
+.blend-radio:active,
+.blend-radio:hover {
+  background: #e0f9ee;
+  border-left-color: #23796a;
+  box-shadow: 0 3px 8px 0 rgba(34,40,50,0.08);
+}
+.blend-radio input[type="radio"] {
+  accent-color: #186a4e;
+  width: 20px;
+  height: 20px;
+  margin: 0 8px 0 0;
+}
+.blend-btn {
+  margin-top: 12px;
+  background: linear-gradient(90deg, #23796a 60%, #a7e7d4 100%);
+  border: none;
+  outline: none;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.07rem;
+  padding: 12px 36px;
+  border-radius: 32px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  box-shadow: 0 1.5px 6px rgba(34,40,50,0.06);
+  transition: background 0.13s;
+}
+
+.blend-btn:disabled {
+  background: #a5b6af;
+  cursor: not-allowed;
+}
+.blend-result-section {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+.blend-score-circle {
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fff 75%, #dceee3 100%);
+  box-shadow: 0 1.5px 8px rgba(34,40,50,0.09);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 5px solid #a7e7d4;
+  margin: 0 auto 24px auto;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #23796a;
+}
+.blend-score-label {
+  text-align: center;
+  font-size: 1.07rem;
+  color: #23796a;
+  font-weight: 600;
+  margin-bottom: 10px;
+  margin-top: -12px;
+}
+.blend-section-score {
+  margin-bottom: 18px;
+  background: #f3f6f3;
+  border-radius: 10px;
+  padding: 8px 16px 8px 16px;
+  box-shadow: 0 3px 8px 0 rgba(34,40,50,0.07);
+  font-size: 1rem;
+  color: #31474e;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: fadein 0.7s cubic-bezier(.8,0,.4,1);
+}
+.blend-section-score .blend-section-dot {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  border-radius: 8px;
+  background: #a7e7d4;
+  margin-right: 7px;
+  box-shadow: 0 2px 4px rgba(34,40,50,0.07);
+}
+.blend-section-score.low .blend-section-dot {
+  background: #fabbbb;
+}
+.blend-section-score.high .blend-section-dot {
+  background: #7ed7b4;
+}
+.blend-section-score.mid .blend-section-dot {
+  background: #ffe892;
+}
+.blend-tips-title {
+  font-size: 1.1rem;
+  color: #23796a;
+  font-weight: 700;
+  margin-bottom: 8px;
+  margin-top: 18px;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+.blend-tips-list {
+  font-size: 1.01rem;
+  margin: 0;
+  padding-left: 22px;
+  line-height: 1.5;
+  color: #4d5c56;
+  margin-bottom: 0;
+}
+.blend-restart-btn {
+  margin-top: 28px;
+  background: #fff;
+  color: #23796a;
+  border: 2.5px solid #23796a;
+  font-weight: 700;
+  font-size: 1.04rem;
+  padding: 11px 28px;
+  border-radius: 28px;
+  cursor: pointer;
+  box-shadow: 0 1.5px 6px rgba(34,40,50,0.05);
+  transition: background 0.13s, color 0.13s, border-color 0.13s;
+}
+.blend-restart-btn:hover {
+  background: #e0f9ee;
+  color: #23796a;
+  border-color: #a7e7d4;
+}
+@media (max-width: 599px) {
+  #blend-quiz-widget { padding: 0 0 24px 0; }
+  .blend-card { margin: 20px 6px 0 6px; padding: 22px 5vw 18px 5vw; }
+}
+</style>
+
+<script>
+const blendQuestions = [
+  {
+    key: "Balance",
+    title: "Balance",
+    desc:
+      "Does your menu showcase variety—root recipes, base spirits, textures, flavor profiles and presentations? Are there options for every guest?",
+    answers: [
+      { score: 5, label: "Extensive: Every root recipe & spirit is covered, with clear stylistic and visual diversity." },
+      { score: 4, label: "Strong: Most root recipes & spirits present, some overlap or minor gaps." },
+      { score: 3, label: "Moderate: Several root recipes, menu leans to one spirit/flavor or style." },
+      { score: 2, label: "Limited: Menu is dominated by 1–2 styles or lacks visual/flavor diversity." },
+      { score: 1, label: "Imbalanced: Most drinks feel similar, little variation in spirits or style." },
+    ],
+    tipsByScore: {
+      1: [
+        "Use the 'root recipe' framework to classify each drink.",
+        "Introduce at least one cocktail from each root recipe (Old Fashioned, Martini, Daiquiri, Sidecar, Highball, Flip).",
+        "Vary base spirits and flavor profiles (bitter, sweet, sour, savory) to appeal widely."
+      ],
+      2: [
+        "Map your current drinks to root recipes and identify gaps.",
+        "Add variety in glassware, color, and drink intensity across the menu."
+      ],
+      3: [
+        "Invite guest or staff feedback to see what styles are missing.",
+        "Diversify texture: balance boozy, creamy, fizzy, and light options."
+      ],
+      4: [
+        "Review drinks for overlap and unique identities—refine to avoid redundancy.",
+        "Try a visual menu chart for team recommendations."
+      ],
+      5: [
+        "Well done! Consider training staff on this diversity for better guest guidance.",
+        "Continue rotating new base spirits and flavor innovations."
+      ],
+    }
+  },
+  {
+    key: "Logistics",
+    title: "Logistics",
+    desc:
+      "How efficiently can your team prep, build, and serve your cocktails? Is the menu service-friendly, realistic, and low-waste?",
+    answers: [
+      { score: 5, label: "Well-oiled: Minimal perishable/prep-heavy items. Service is fast and stress-free. No ingredient supply headaches." },
+      { score: 4, label: "Efficient: Some ingredients or service steps take extra time, but managed well. Sourcing is reliable." },
+      { score: 3, label: "Average: Occasional slowdowns from complex prep or slow garnishes. Some supply challenges." },
+      { score: 2, label: "Challenging: Frequent lags, lots of last-minute garnish/prep. Sourcing causes menu edits." },
+      { score: 1, label: "Inefficient: Menu is hard to execute nightly, with high waste, spoilage, or 86s." },
+    ],
+    tipsByScore: {
+      1: [
+        "Reduce perishable and high-waste ingredients on the menu.",
+        "Opt for batched spirit-forward builds or simple garnishes.",
+        "Re-evaluate drinks requiring hard-to-source or volatile ingredients."
+      ],
+      2: [
+        "Aim to minimize last-minute prep & complex garnishes.",
+        "Batch slow components, and standardize garnishes where possible."
+      ],
+      3: [
+        "Update your prep and service workflow to address common choke points.",
+        "Communicate closely with your distributor to forecast ingredient needs."
+      ],
+      4: [
+        "Continue refining your batching and supplier relationships.",
+        "Involve your team in menu R&D to spot future logistical challenges."
+      ],
+      5: [
+        "Nice work—strong logistics make for smooth shifts and happy guests.",
+        "Share workflow best practices with new staff regularly."
+      ],
+    }
+  },
+  {
+    key: "Engagement",
+    title: "Engagement",
+    desc:
+      "Does your menu offer entry-level (familiar) and challenging (creative/novel) options for guests? Is there a sense of journey or discovery?",
+    answers: [
+      { score: 5, label: "Spot-on: Both approachable favorites and exciting, unique choices. Guests discover new things easily." },
+      { score: 4, label: "Well mixed: Good comfort/challenge balance. Few gaps in guest appeal." },
+      { score: 3, label: "Decent: Comfort options dominate, or a few creative outliers. Lacks a sense of journey." },
+      { score: 2, label: "Limited: Mostly familiar drinks or mostly challenging ones—little variety in guest experience." },
+      { score: 1, label: "One-note: Menu is monotone, risking boredom or confusion for guests." },
+    ],
+    tipsByScore: {
+      1: [
+        "Include both 'gateway' cocktails with familiar flavors & spirits and true bartender expressions.",
+        "Highlight house signatures and offer guidance on the menu."
+      ],
+      2: [
+        "Feature seasonal or limited-time challenging options alongside comfort drinks.",
+        "Encourage your staff to help guests step outside their comfort zone."
+      ],
+      3: [
+        "Ask regular guests which creative or approachable drinks they wish to see.",
+        "Describe 'novel' or unfamiliar ingredients in friendly, inviting ways."
+      ],
+      4: [
+        "Maintain your comfort/challenge ratio as you add new drinks.",
+        "Consider visual icons or flavor notes to spark discovery."
+      ],
+      5: [
+        "Brilliant! Keep staff informed so they can guide every guest to the right selection.",
+        "Periodically refresh menus to maintain curiosity."
+      ],
+    }
+  },
+  {
+    key: "Numbers",
+    title: "Numbers",
+    desc:
+      "Are your drinks accurately costed for both ingredients and labor, with margins and pricing in a healthy range?",
+    answers: [
+      { score: 5, label: "Pristine: All drinks costed, including labor-intensive/prep items. Menu-wide strategy for margin balance." },
+      { score: 4, label: "Thorough: Ingredient costs tracked for all drinks, most labor considered. Profitable overall." },
+      { score: 3, label: "Partial: Key drinks costed, but not all. Minor labor or sub-recipe costs missed." },
+      { score: 2, label: "Poor: Many drinks uncosted. Pricing doesn't reflect prep/time or popularity." },
+      { score: 1, label: "Unknown: No formal costing. Pricing largely gut-based." },
+    ],
+    tipsByScore: {
+      1: [
+        "Start costing every drink, even house-made syrups/juices.",
+        "Aim for 10–25% ingredient cost per menu price.",
+        "Track labor/time for each drink as hidden cost."
+      ],
+      2: [
+        "Prioritize costing for labor-intensive or prep-heavy drinks first.",
+        "Create a simple costing sheet for your team."
+      ],
+      3: [
+        "Review sub-recipes for missing costs—clarified juices, barrel aging, etc.",
+        "Check margin balance: are your 'showpiece' drinks carried by high-volume winners?"
+      ],
+      4: [
+        "Regularly re-cost old menu items as prices or suppliers change.",
+        "Reevaluate pricing on less-popular but complex drinks."
+      ],
+      5: [
+        "Outstanding—consistency and profitability are your friends!",
+        "Share practice costing skills with your team for continuity."
+      ],
+    }
+  },
+  {
+    key: "Delicious",
+    title: "Delicious",
+    desc:
+      "Does every cocktail pass the taste test—nuanced, well balanced, and so good you’d order a second round?",
+    answers: [
+      { score: 5, label: "Craveworthy: Flavors pop, every drink delivers balance & complexity. Guests rave & reorder." },
+      { score: 4, label: "Very good: Minor tweaks could improve a few, but most drinks are compulsively sippable." },
+      { score: 3, label: "Decent: Several crowd-pleasers, others feel 'almost there.' Occasional unevenness." },
+      { score: 2, label: "Needs work: Most drinks are OK but forgettable, or have noticeable flaws." },
+      { score: 1, label: "Weak: Guests rarely reorder or finish. Feedback is rarely positive." },
+    ],
+    tipsByScore: {
+      1: [
+        "Hold team tastings to calibrate and identify flavor imbalances.",
+        "Use a formal tasting framework: Nose, Palate, Finish, Balance.",
+        "Refine specs—tiny tweaks in dilution or garnish can have outsized effects."
+      ],
+      2: [
+        "Solicit honest staff and guest feedback and iterate on specs.",
+        "Identify and retire recipes that rarely sell or get reordered."
+      ],
+      3: [
+        "Focus R&D on improving weaker offerings; review batch and serve practices for consistency.",
+        "Experiment with subtle ingredient swaps."
+      ],
+      4: [
+        "Run 'blind' roundtable tastings for fresh feedback.",
+        "Look for opportunities to surprise with presentation."
+      ],
+      5: [
+        "Bravo! Keep tasting and iterating to stay on top.",
+        "Rotate seasonal standouts to keep the menu fresh."
+      ],
+    }
+  },
+];
+
+let blendUserResponses = [];
+let blendCurrentStep = 0;
+let blendAnimating = false;
+
+function blendRenderProgress() {
+  const percent = ((blendCurrentStep) / blendQuestions.length) * 100;
+  document.getElementById('blend-progress-bar').style.width = percent + '%';
+  document.getElementById('blend-progress-text').textContent =
+    (blendCurrentStep < blendQuestions.length)
+      ? `Step ${blendCurrentStep + 1} of ${blendQuestions.length}`
+      : "Results";
+}
+function blendScrollCardToTop() {
+  // Ensures the next slide is visible on mobile.
+  const card = document.getElementById('blend-card');
+  if (card) card.scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+function blendRenderQuestion(idx) {
+  blendScrollCardToTop();
+  const q = blendQuestions[idx];
+  let html = `<div class="blend-title">${q.title} <span style="font-weight:400;color:#9daf9a;font-size:0.97rem;">(${q.key})</span></div>`;
+  html += `<div class="blend-desc">${q.desc}</div>`;
+  html += `<form class="blend-radios" id="blend-q-${idx}-form">`;
+
+  q.answers.forEach((a, i) => {
+    // Render radio options top-to-bottom: 5..1
+    html += `<label class="blend-radio" id="blend-q${idx}-opt${i}">
+        <input type="radio" name="blend-q${idx}" value="${a.score}" />
+        <span>${a.label}</span>
+      </label>`;
+  });
+
+  html += `</form>`;
+  html += `<button class="blend-btn" id="blend-next-btn" disabled>Next</button>`;
+
+  document.getElementById('blend-card').innerHTML = html;
+
+  // Interactive: select radio on click, highlight, next active
+  document.querySelectorAll(`#blend-q-${idx}-form .blend-radio`).forEach(label => {
+    label.addEventListener('click', function() {
+      document.querySelectorAll(`#blend-q-${idx}-form .blend-radio`).forEach(l => l.classList.remove('selected'));
+      this.classList.add('selected');
+      this.querySelector('input[type=radio]').checked = true;
+      document.getElementById('blend-next-btn').disabled = false;
+    });
+  });
+
+  document.getElementById('blend-next-btn').addEventListener('click', function() {
+    if (blendAnimating) return;
+    const checked = document.querySelector(`input[name=blend-q${idx}]:checked`);
+    if (checked) {
+      blendUserResponses[idx] = parseInt(checked.value);
+      blendCurrentStep++;
+      blendAnimating = true;
+
+      blendRenderProgress();
+      setTimeout(() => {
+        if (blendCurrentStep < blendQuestions.length) {
+          blendRenderQuestion(blendCurrentStep);
+        } else {
+          blendRenderResults();
+        }
+        blendAnimating = false;
+      }, 340);
+    }
+  });
+
+  blendRenderProgress();
+}
+function blendScoreLevel(score) {
+  if(score >= 5) return 'high';
+  if(score === 4) return 'high';
+  if(score === 3) return 'mid';
+  if(score === 2) return 'low';
+  return 'low';
+}
+function blendGetSectionScoreLabel(score) {
+  if(score === 5) return 'Excellent!';
+  if(score === 4) return 'Strong';
+  if(score === 3) return 'Adequate';
+  if(score === 2) return 'Needs Work';
+  return 'Critical';
+}
+function blendGetOverallFeedback(average) {
+  if (average >= 4.7) return "World-class! Your B.L.E.N.D. is a model for others.";
+  if (average >= 4) return "Excellent foundation. Keep iterating for true standout status.";
+  if (average >= 3.5) return "Good! A few tweaks will help your menu shine in every area.";
+  if (average >= 2.5) return "Some strengths, but visible gaps—review specific tips below.";
+  return "Big opportunity: Focus on foundational improvements first.";
+}
+function blendGetOverallColor(average) {
+  if (average >= 4.7) return "#175844";
+  if (average >= 4) return "#23796a";
+  if (average >= 3.5) return "#ffbc3b";
+  if (average >= 2.5) return "#ff6b3b";
+  return "#b33c3c";
+}
+
+function blendRenderResults() {
+  blendScrollCardToTop();
+  let total = blendUserResponses.reduce((sum, val) => sum + val, 0);
+  let average = total / blendQuestions.length;
+  const percent = Math.round((average / 5) * 100);
+
+  let html = `<div class="blend-result-section">`;
+  html += `<div class="blend-score-circle" style="border-color:${blendGetOverallColor(average)};color:${blendGetOverallColor(average)};">
+              <span>${percent}</span>
+              <span style="font-size:1rem;font-weight:700;margin-top:-6px;">/100</span>
+           </div>`;
+  html += `<div class="blend-score-label">${blendGetOverallFeedback(average)}</div>`;
+  html += `<div style="margin:16px 0 0 0;font-size:0.99rem;color:#93a2a1;font-weight:500;text-align:center;">Section Breakdown</div>`;
+
+  blendQuestions.forEach((q, i) => {
+    const score = blendUserResponses[i] || 1;
+    const level = blendScoreLevel(score);
+    const icon = {
+      high: "🌟",
+      mid: "✨",
+      low: "⚠️"
+    }[level];
+    html += `<div class="blend-section-score ${level}">
+          <span class="blend-section-dot"></span>
+          <span style="font-size:1.08rem;font-weight:700;color:#186a4e;margin-right:10px;">${q.key}</span>
+          <span style="margin-right:9px;opacity:0.72;">${icon}</span>
+          <span>${blendGetSectionScoreLabel(score)}</span>
+        </div>`;
+  });
+  html += `<div class="blend-tips-title">Personalized Tips to Level Up</div>`;
+
+  html += `<ol class="blend-tips-list">`;
+  blendQuestions.forEach((q, i) => {
+    const score = blendUserResponses[i] || 1;
+    html += `<li><b>${q.title}:</b> ${q.tipsByScore[score][0]}</li>`;
+  });
+  html += `</ol>`;
+
+  html += `<button class="blend-restart-btn" id="blend-restart-btn">Retake Quiz</button>`;
+
+  html += `</div>`;
+  document.getElementById('blend-card').innerHTML = html;
+
+  document.getElementById('blend-restart-btn').onclick = () => {
+    blendCurrentStep = 0;
+    blendUserResponses = [];
+    blendRenderQuestion(0);
+  };
+  blendRenderProgress();
+}
+// Launch widget
+blendRenderQuestion(0);
+</script>

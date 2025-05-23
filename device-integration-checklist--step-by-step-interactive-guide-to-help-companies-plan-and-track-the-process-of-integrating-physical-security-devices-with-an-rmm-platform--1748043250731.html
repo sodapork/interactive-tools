@@ -1,0 +1,685 @@
+<div id="rmm-integration-widget">
+  <div class="rmm-progress-bar">
+    <div class="rmm-progress-fill" style="width: 14%;"></div>
+    <div class="rmm-progress-steps">
+      <div class="rmm-step rmm-step-active" data-step="1"></div>
+      <div class="rmm-step" data-step="2"></div>
+      <div class="rmm-step" data-step="3"></div>
+      <div class="rmm-step" data-step="4"></div>
+      <div class="rmm-step" data-step="5"></div>
+      <div class="rmm-step" data-step="6"></div>
+      <div class="rmm-step" data-step="7"></div>
+    </div>
+  </div>
+
+  <div class="rmm-widget-content">
+    <!-- Dynamic content will be injected here -->
+  </div>
+
+  <div class="rmm-widget-controls">
+    <button class="rmm-btn rmm-btn-back" disabled>Back</button>
+    <button class="rmm-btn rmm-btn-next">Next</button>
+  </div>
+</div>
+
+<style>
+#rmm-integration-widget {
+  font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
+  color: #162238;
+  background: #fff;
+  max-width: 530px;
+  margin: 0 auto;
+  box-shadow: 0 6px 24px 0 rgba(32,41,59,0.13);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #EEF2F7;
+  position: relative;
+}
+
+.rmm-progress-bar {
+  padding: 24px 32px 8px 32px;
+  background: linear-gradient(90deg,#e7f4fa 30%,#f5f7fa 75%);
+  position: relative;
+}
+
+.rmm-progress-bar .rmm-progress-fill {
+  height: 6px;
+  border-radius: 4px;
+  background: linear-gradient(90deg,#1570EF 40%, #726DC4 100%);
+  transition: width 0.4s cubic-bezier(0.55,0,0.1,1);
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  top: 36px;
+  z-index: 1;
+}
+
+.rmm-progress-bar .rmm-progress-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+  padding: 0 18px;
+  top: 8px;
+}
+
+.rmm-progress-bar .rmm-step {
+  width: 16px;
+  height: 16px;
+  background: #E4EAF2;
+  border: 2.5px solid #C9DDF8;
+  border-radius: 50%;
+  transition: background 0.3s, border-color 0.3s;
+  box-sizing: border-box;
+  position: relative;
+}
+.rmm-progress-bar .rmm-step-active,
+.rmm-progress-bar .rmm-step-completed {
+  background: #fff;
+  border-color: #1570EF;
+  box-shadow: 0 0 0 3px #B0DFFF70;
+}
+.rmm-progress-bar .rmm-step-completed:after {
+  content: "";
+  position: absolute;
+  top: 3px; left: 4px; width: 6px; height: 9px;
+  border: solid #1570EF;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.rmm-widget-content {
+  padding: 36px 32px 24px 32px;
+  min-height: 310px;
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.rmm-widget-controls {
+  background: #F6FAFC;
+  border-top: 1px solid #ECECEC;
+  padding: 18px 32px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.rmm-btn {
+  background: linear-gradient(97deg,#1570EF 30%,#726DC4 100%);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 28px;
+  cursor: pointer;
+  transition: background 0.2s, filter 0.2s;
+  filter: drop-shadow(0px 4px 12px #DEF5FF80);
+}
+.rmm-btn[disabled] {
+  opacity: 0.48;
+  cursor: not-allowed;
+  filter: none;
+}
+.rmm-btn.rmm-btn-back {
+  background: #e7f4fa;
+  color: #246;
+  filter: none;
+}
+
+.rmm-checked-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 24px 0 0 0;
+}
+.rmm-checked-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  font-size: 1.07rem;
+  position: relative;
+  padding-left: 0;
+}
+.rmm-checkbox {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 2.5px solid #1570EF;
+  border-radius: 6px;
+  margin-right: 18px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+  outline: none;
+  background: #f8fafc;
+  cursor: pointer;
+}
+.rmm-checkbox:checked {
+  background: #1570EF;
+  border-color: #1570EF;
+}
+.rmm-checkbox:checked:after {
+  content: '';
+  position: absolute;
+  left: 6px; top: 3.5px;
+  width: 6px; height: 11px;
+  border: solid #fff;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+.rmm-tip {
+  margin-top: 7px;
+  color: #6D829E;
+  font-size: 0.99rem;
+  background: #f5faff;
+  border-left: 3px solid #9FADF9;
+  border-radius: 0 8px 8px 0;
+  padding: 8px 18px;
+  animation: fadeInTip 0.7s;
+}
+
+.rmm-branching {
+  margin-top: 32px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.rmm-branching button {
+  padding: 13px 22px;
+  border-radius: 7px;
+  border: 2px solid #EFF2FA;
+  background: #f5faff;
+  font-size: 1.07rem;
+  color: #213251;
+  font-weight: 600;
+  transition: border-color 0.18s, background 0.18s, color 0.18s;
+  cursor: pointer;
+}
+.rmm-branching button.selected,
+.rmm-branching button:hover {
+  border-color: #726DC4;
+  background: #e5e8fa;
+  color: #3a3a87;
+}
+
+.rmm-summary {
+  margin-top: 8px;
+}
+.rmm-summary .rmm-category {
+  font-size: 1.06rem;
+  font-weight: bold;
+  color: #354168;
+  margin-top: 14px;
+  margin-bottom: 2px;
+}
+.rmm-summary-list {
+  margin: 0;
+  padding-left: 20px;
+  color: #5C6A84;
+}
+.rmm-summary-status {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+}
+.rmm-summary-status .rmm-status-box {
+  flex: 1;
+  background: #f9fbff;
+  border: 1px solid #e6ebf5;
+  border-radius: 7px;
+  padding: 10px 11px 10px 14px;
+}
+.rmm-status-box h4 {
+  font-size: 0.97rem;
+  margin: 0 0 3px 0;
+  color: #132040;
+  font-weight: 500;
+}
+.rmm-status-ok {
+  color: #159257;
+  font-weight: bold;
+}
+.rmm-status-alert {
+  color: #EF5A51;
+  font-weight: bold;
+}
+
+.rmm-animate-in {
+  opacity: 0;
+  animation: fadeInUp 0.5s forwards;
+}
+
+@keyframes fadeInUp {
+  0% { opacity:0; transform: translateY(30px);}
+  100% { opacity: 1; transform: none;}
+}
+@keyframes fadeInTip {
+  0% { opacity:0; transform: translateY(10px);}
+  100% {opacity:1; transform:none;}
+}
+</style>
+
+<script>
+const rmmSteps = [
+  {
+    title: "Step 1: Identify Device Types",
+    desc: "What physical security devices do you need to integrate?",
+    render: (state) => `
+      <div class="rmm-animate-in">
+        <div class="rmm-tip">
+          Select all that apply for your facility.
+        </div>
+        <ul class="rmm-checked-list">
+          ${['Cameras (CCTV, IP Cameras)', 'Access Control Systems', 'Occupancy/Environmental Sensors', 'Smart Locks', 'Intercoms', 'Alarms/Intrusion Sensors', 'Other/Custom'].map((item,i)=>`
+            <li>
+              <input type="checkbox" class="rmm-checkbox" id="devtype_${i}" data-value="${item}" ${state.selectedDevices?.[item]?'checked':''}/>
+              <label for="devtype_${i}">${item}</label>
+            </li>`).join('')}
+        </ul>
+        <div class="rmm-tip" style="margin-top:18px;">
+          The more device types you centralize, the deeper your insights will become.
+        </div>
+      </div>
+    `,
+    onMount: (el, state, updateState) => {
+      el.querySelectorAll('.rmm-checkbox').forEach(input => {
+        input.addEventListener('change', e => {
+          const newSelected = Object.assign({}, state.selectedDevices);
+          const val = input.getAttribute('data-value');
+          if(input.checked) newSelected[val] = true;
+          else delete newSelected[val];
+          updateState({ selectedDevices: newSelected });
+        });
+      });
+    },
+    validate: (state) => Object.keys(state.selectedDevices||{}).length>0
+  },
+  {
+    title: "Step 2: Map Device Locations",
+    desc: "Where are these devices deployed?",
+    render: (state) => `
+      <div class="rmm-animate-in">
+        <div class="rmm-tip">Add all significant locations or zones you'd like monitored and managed via RMM.</div>
+        <ul class="rmm-checked-list" id="rmm-locations-list">
+          ${(state.locations||[]).map((loc,i)=>`
+            <li>
+              <input type="text" class="rmm-loc-input" style="width:62%" data-idx="${i}" value="${loc}" maxlength="38" />
+              <button class="rmm-del-loc" data-idx="${i}" title="Remove">&#x2715;</button>
+            </li>
+          `).join('')}
+        </ul>
+        <button class="rmm-btn" style="background:#E4EAF2!important;color:#4c5894;padding:7px 18px;margin-top:9px;" id="addLocationBtn">+ Add Location/Zone</button>
+        <div class="rmm-tip" style="margin-top:18px;">Locations can be specific rooms (e.g. Server Room), zones (Warehouse South), or entire buildings/sites.</div>
+      </div>
+    `,
+    onMount: (el, state, updateState) => {
+      el.querySelector('#addLocationBtn').onclick = () => {
+        if(!state.locations) state.locations = [];
+        if(state.locations.length >= 8) return;
+        updateState({ locations:[...(state.locations||[]),""] });
+      };
+      el.querySelectorAll('.rmm-loc-input').forEach(input => {
+        input.addEventListener('input', e => {
+          const idx = +input.getAttribute('data-idx');
+          const updated = (state.locations||[]).slice();
+          updated[idx] = input.value;
+          updateState({locations:updated});
+        });
+      });
+      el.querySelectorAll('.rmm-del-loc').forEach(btn=>{
+        btn.onclick = ()=>{
+          const idx=+btn.getAttribute('data-idx');
+          const updated = (state.locations||[]).slice();
+          updated.splice(idx,1);
+          updateState({locations:updated});
+        }
+      });
+    },
+    validate: (state) => (state.locations||[]).filter(i=>i.trim()).length>0
+  },
+  {
+    title: "Step 3: Integration Goals",
+    desc: "What do you want to achieve via RMM integration?",
+    render: (state) => `
+      <div class="rmm-animate-in">
+        <div class="rmm-tip">Pick the top priorities driving your RMM rollout.</div>
+        <ul class="rmm-checked-list">
+          ${[
+            "Centralize all device data streams",
+            "Enable real-time remote monitoring",
+            "Correlate analytics across devices (e.g. cameras + access)",
+            "Automate building functions (environment, lighting, security alerts)",
+            "Predict maintenance before failures",
+            "Improve compliance/reporting"
+          ].map((goal,i)=>`
+            <li>
+              <input type="checkbox" class="rmm-checkbox" id="goal_${i}" data-value="${goal}" ${state.goals && state.goals[goal]?'checked':''}/>
+              <label for="goal_${i}">${goal}</label>
+            </li>`).join('')}
+        </ul>
+        <div class="rmm-tip" style="margin-top:18px;">
+          Not sure? Most organizations start with remote monitoring, then branch out into cross-device analytics and automation.
+        </div>
+      </div>
+    `,
+    onMount: (el, state, updateState) => {
+      el.querySelectorAll('.rmm-checkbox').forEach(input=>{
+        input.addEventListener('change', e=>{
+          const newGoals = Object.assign({}, state.goals);
+          const val = input.getAttribute('data-value');
+          if(input.checked) newGoals[val] = true;
+          else delete newGoals[val];
+          updateState({ goals: newGoals });
+        });
+      });
+    },
+    validate: (state) => Object.keys(state.goals||{}).length>0
+  },
+  {
+    title: "Step 4: System Readiness",
+    desc: "Assess your current tech landscape.",
+    render: (state) => `
+      <div class="rmm-animate-in">
+        <div class="rmm-tip">
+          For each device type, is it connected to the network and producing actionable data?
+        </div>
+        <ul class="rmm-checked-list">
+          ${Object.keys(state.selectedDevices||{}).map((dev,i)=>{
+            const readiness=state.readiness||{};
+            return `<li>
+              <select class="rmm-readiness" data-dev="${dev}">
+                <option value="unknown" ${!readiness[dev]||readiness[dev]==='unknown'?'selected':''}>Select</option>
+                <option value="ready" ${readiness[dev]==='ready'?'selected':''}>Yes: Networked and Data Accessible</option>
+                <option value="partial" ${readiness[dev]==='partial'?'selected':''}>Partially: Needs Updates/Upgrades</option>
+                <option value="not" ${readiness[dev]==='not'?'selected':''}>No: Not Yet Networked/Accessible</option>
+              </select>
+              <span style="margin-left:14px;">${dev}</span>
+            </li>`;
+          }).join('')}
+        </ul>
+        <div class="rmm-tip" style="margin-top:18px;">
+          Devices in "partial" or "not" ready status may require IT support, firmware updates, or physical upgrades before integration.
+        </div>
+      </div>
+    `,
+    onMount: (el, state, updateState) => {
+      el.querySelectorAll('.rmm-readiness').forEach(sel=>{
+        sel.onchange = ()=>{
+          const readiness = Object.assign({},state.readiness);
+          readiness[sel.getAttribute('data-dev')]= sel.value;
+          updateState({ readiness });
+        }
+      });
+    },
+    validate:(state)=>{
+      const required = Object.keys(state.selectedDevices||{});
+      const vals = state.readiness||{};
+      return required.length>0 && required.every(d=>vals[d] && vals[d]!=='unknown');
+    }
+  },
+  {
+    title: "Step 5: Data Integration Complexity",
+    desc: "Anticipate the integration effort for your selected devices.",
+    render: (state) => {
+      const selected = Object.keys(state.selectedDevices||{});
+      if(selected.length===0) return '<div class="rmm-animate-in"><div class="rmm-tip">No devices selected.</div></div>';
+      let chartData = selected.map(dev=>{
+        let level=1;
+        let tip = '';
+        if(dev.includes('Cameras')) {level=2; tip='Video analytics/Large files. May need bandwidth upgrade.';}
+        else if(dev.includes('Access')) {level=2; tip='Access logs. Needs API or database integration.';}
+        else if(dev.includes('Sensors')) {level=1; tip='Simple data. Usually low-complexity IoT integration.';}
+        else if(dev.includes('Smart Locks')){level=2; tip='Check protocol compatibility.';}
+        else if(dev.includes('Intercoms')){level=1; tip='Often straightforward, but check vendor support.';}
+        else if(dev.includes('Alarms')){level=1; tip='Monitor for alert events.';}
+        else {level=2; tip='Custom integration: consult IT.';}
+        return {dev,level,tip};
+      });
+      // chart: group by levels
+      const L = chartData.length;
+      const metrics = [chartData.filter(d=>d.level===1).length,chartData.filter(d=>d.level===2).length];
+      return `
+        <div class="rmm-animate-in">
+          <svg width="320" height="90" viewBox="0 0 350 90" style="display:block;margin:auto;">
+            <!-- Easy bar -->
+            <rect x="36" y="35" width="${metrics[0]*60}" height="18" rx="8"
+             fill="#13B67C" />
+            <text x="0" y="48" fill="#13B67C" font-size="1.07em" font-family="inherit" font-weight="bold">Low/Easy</text>
+            <!-- Complex bar -->
+            <rect x="36" y="70" width="${metrics[1]*60}" height="18" rx="8"
+             fill="#F4A038" />
+            <text x="0" y="83.3" fill="#F4A038" font-size="1.07em" font-family="inherit" font-weight="bold">Mod/Complex</text>
+          </svg>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;gap:8px;">
+            <div><span style="color:#13B67C;font-weight:bold;">${metrics[0]}</span> easy</div>
+            <div><span style="color:#F4A038;font-weight:bold;">${metrics[1]}</span> moderate/complex</div>
+          </div>
+          <div class="rmm-tip" style="margin-top:2px;margin-bottom:-8px;">
+            ${chartData.map(c=>`
+              <div style="margin-bottom: 3px;">
+                <span style="font-weight:600;color:#468fde">${c.dev}:</span>
+                <span style="color:${c.level===1?'#13B67C':'#F4A038'};font-weight:600;">
+                  ${c.level===1?'Easy':'Moderate/Complex'}
+                </span>
+                <span style="opacity:.74;font-size:0.96em;"> – ${c.tip}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    },
+    onMount: (el,state,updateState)=>{},
+    validate:(state)=>true
+  },
+  {
+    title: "Step 6: Integration Roadmap",
+    desc: "Drag to plan your order of integration.",
+    render: (state) => {
+      const devs = Object.keys(state.selectedDevices||{}) || [];
+      let orderArr = state.integrationOrder || devs;
+      // Normalize
+      orderArr = orderArr.filter(d=>devs.includes(d));
+      devs.forEach(d=>{ if(!orderArr.includes(d)) orderArr.push(d); });
+      return `
+        <div class="rmm-animate-in">
+          <div class="rmm-tip">
+            Start with devices that are "ready" or "easy" to integrate.
+          </div>
+          <ul class="rmm-checked-list" id="rmm-order-list" style="margin-top:15px;">
+            ${orderArr.map((dev,i)=>`
+              <li draggable="true" class="rmm-draggable" data-idx="${i}" style="cursor:grab;">
+                <span style="background:#ECF2FF;color:#3844a1;border-radius:5px;padding:2px 9px;margin-right:11px;font-weight:500;">${i+1}</span> ${dev}
+              </li>
+            `).join('')}
+          </ul>
+          <div class="rmm-tip" style="margin-top:13px;">Drag and drop to reorder – e.g. Cameras first, then access controls, etc.</div>
+        </div>
+      `;
+    },
+    onMount: (el,state,updateState) => {
+      let ul = el.querySelector("#rmm-order-list");
+      let dragIdx = null;
+      ul.querySelectorAll('li').forEach(li=>{
+        li.ondragstart = (e)=>{ dragIdx=+li.getAttribute('data-idx'); li.style.opacity=0.7; };
+        li.ondragend = (e)=>{ dragIdx=null; li.style.opacity=1; };
+        li.ondragover=(e)=>{e.preventDefault();li.style.borderTop="2.7px solid #1570EF";};
+        li.ondragleave=(e)=>{li.style.borderTop="none";};
+        li.ondrop = (e)=>{
+          e.preventDefault();
+          li.style.borderTop="none";
+          let dropIdx = +li.getAttribute('data-idx');
+          let arr = (state.integrationOrder||Object.keys(state.selectedDevices||{})).slice();
+          if(dragIdx===dropIdx) return;
+          const [item] = arr.splice(dragIdx,1);
+          arr.splice(dropIdx,0,item);
+          updateState({ integrationOrder: arr });
+        };
+      });
+    },
+    validate:(state)=>true
+  },
+  {
+    title: "Step 7: Review & Download Checklist",
+    desc: "Here's a summary to guide your RMM device integration rollout.",
+    render: (state) => {
+      const deviceList = Object.keys(state.selectedDevices||{});
+      const locs = (state.locations||[]).filter(i=>i.trim());
+      const goals = Object.keys(state.goals||{});
+      const readiness = state.readiness||{};
+      const roadmap = (state.integrationOrder||deviceList);
+      let alertCount = deviceList.filter(dev=>readiness[dev] && readiness[dev]!=='ready').length;
+      return `
+        <div class="rmm-animate-in">
+          <div class="rmm-summary">
+            <div class="rmm-category">Devices to Integrate:</div>
+            <ul class="rmm-summary-list">${deviceList.map(d=>`<li>${d}</li>`).join('')}</ul>
+            <div class="rmm-category">Locations/Zones:</div>
+            <ul class="rmm-summary-list">${locs.map(d=>`<li>${d}</li>`).join('')}</ul>
+            <div class="rmm-category">Goals:</div>
+            <ul class="rmm-summary-list">${goals.map(d=>`<li>${d}</li>`).join('')}</ul>
+            <div class="rmm-category">Device Readiness:</div>
+            <ul class="rmm-summary-list">${
+              deviceList.map(d=>{
+                let r = readiness[d];
+                return `<li>${d}: <span style="font-weight:600;color:
+                ${r==='ready'?'#13B67C':(r==='partial'?'#F4A038':'#EF5A51')};">
+                ${r==='ready'?'Ready':(r==='partial'?'Partial':'Not Ready')}</span></li>`;
+              }).join('')
+            }</ul>
+            <div class="rmm-category">Integration Roadmap:</div>
+            <ul class="rmm-summary-list">${roadmap.map((d,i)=>`<li><span style="color:#7F64D0;font-weight:600;">${i+1}.</span> ${d}</li>`).join('')}</ul>
+          </div>
+          <div class="rmm-summary-status">
+            <div class="rmm-status-box">
+              <h4>Status</h4>
+              <span class="rmm-status-${alertCount===0?'ok':'alert'}">
+                ${alertCount===0?'Ready for RMM':'Attention: Prep Needed'}
+              </span>
+            </div>
+            <div class="rmm-status-box">
+              <h4>Checklist</h4>
+              <button class="rmm-btn" id="rmm-download-btn" style="font-size:0.98em;padding:7px 20px;margin-top:3px;background:#1570ef;filter:none;">Download</button>
+            </div>
+          </div>
+        </div>
+      `;
+    },
+    onMount: (el, state, updateState)=>{
+      el.querySelector('#rmm-download-btn').onclick = ()=>{
+        // Generate a checklist
+        let devs = Object.keys(state.selectedDevices||{});
+        let locs = (state.locations||[]).filter(i=>i.trim());
+        let goals = Object.keys(state.goals||{});
+        let roadmap = (state.integrationOrder||devs);
+        let readiness = state.readiness||{};
+        let lines = [
+          'Device Integration Checklist:',
+          '',
+          'Devices to Integrate:',
+          ...devs.map(d=>'  - '+d),
+          '',
+          'Locations/Zones:',
+          ...locs.map(l=>'  - '+l),
+          '',
+          'Goals:',
+          ...goals.map(g=>'  - '+g),
+          '',
+          'Device Readiness:',
+          ...devs.map(d=>`  - ${d}: ${readiness[d]==='ready'?'Ready':readiness[d]==='partial'?'Partial / Needs Update':'Not Ready'}`),
+          '',
+          'Recommended Integration Roadmap:',
+          ...roadmap.map((d,i)=>`  ${i+1}. ${d}`)
+        ];
+        let blob = new Blob([lines.join('\r\n')],{type:'text/plain'});
+        let a=document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'RMM_Device_Integration_Checklist.txt';
+        a.click();
+      }
+    },
+    validate:(state)=>true
+  }
+];
+
+function updateProgress(step){
+  let pct = Math.round((step/(rmmSteps.length-1))*100);
+  document.querySelector("#rmm-integration-widget .rmm-progress-fill").style.width = Math.max(14,pct)+"%";
+  document.querySelectorAll("#rmm-integration-widget .rmm-step").forEach((stepDot,i)=>{
+    stepDot.classList.toggle('rmm-step-active',i===step);
+    stepDot.classList.toggle('rmm-step-completed',i<step);
+  });
+}
+
+function renderStep(stepIdx,state){
+  updateProgress(stepIdx);
+  const step = rmmSteps[stepIdx];
+  let content = `<h2 style="font-size:1.32em;font-weight:700;margin-top:0;margin-bottom:2px;color:#213251;">${step.title}</h2>`;
+  content += `<div style="font-size:1.08em;color:#4F5E89;margin-bottom:23px;margin-top:6px;">${step.desc}</div>`;
+  content += step.render(state);
+  document.querySelector("#rmm-integration-widget .rmm-widget-content").innerHTML = content;
+  document.querySelector("#rmm-integration-widget .rmm-btn-back").disabled=(stepIdx===0);
+  document.querySelector("#rmm-integration-widget .rmm-btn-next").textContent=
+    stepIdx<rmmSteps.length-1 ? 'Next' : 'Finish';
+  setTimeout(()=>{
+    step.onMount && step.onMount(document.querySelector("#rmm-integration-widget .rmm-widget-content"),state,partial=>{
+      Object.assign(state,partial); renderStep(stepIdx,state);
+    });
+  },50);
+}
+
+(function(){
+  let stepIdx = 0;
+  let state = {
+    selectedDevices: {},
+    locations:[],
+    goals:{},
+    readiness:{},
+    integrationOrder: []
+  };
+  renderStep(stepIdx,state);
+
+  // Navigation handlers
+  document.querySelector("#rmm-integration-widget .rmm-btn-next").onclick = ()=>{
+    const valid = rmmSteps[stepIdx].validate(state);
+    if(!valid){
+      // animated feedback for invalid
+      let el = document.querySelector("#rmm-integration-widget .rmm-widget-content");
+      el.style.animation="shake 0.37s";
+      el.onanimationend = ()=>{el.style.animation='';};
+      return;
+    }
+    if(stepIdx<rmmSteps.length-1){
+      stepIdx++;
+      renderStep(stepIdx,state);
+    }
+  };
+  document.querySelector("#rmm-integration-widget .rmm-btn-back").onclick = ()=>{
+    if(stepIdx>0){
+      stepIdx--;
+      renderStep(stepIdx,state);
+    }
+  };
+
+  // Keyboard navigation
+  document.querySelector("#rmm-integration-widget").addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='Enter'){
+      document.querySelector(".rmm-btn-next").click();
+    } else if(e.key==='ArrowLeft'){
+      document.querySelector(".rmm-btn-back").click();
+    }
+  });
+
+  // Simple shake animation
+  var style = document.createElement('style'); style.innerHTML = `
+    @keyframes shake{
+      0%{transform:translateX(0px);}
+      18%{transform:translateX(-14px);}
+      38%{transform:translateX(8px);}
+      65%{transform:translateX(-6px);}
+      82%{transform:translateX(4px);}
+      99%{transform:translateX(-2px);}
+      100%{transform:translateX(0);}
+    }
+  `;
+  document.head.appendChild(style);
+})();
+</script>

@@ -1,0 +1,120 @@
+```html
+<!-- HTML -->
+<div id="ssb-calculator-app" class="ssa-calculator-container">
+      <h2 class="ssa-calculator-title">Social Security Benefits Calculator</h2>
+      <p class="ssa-calculator-intro">Enter your specific work history and age to estimate your potential Social Security benefits.</p>
+      <div class="ssa-calculator-inputs">
+           <div class="ssa-input-container">
+               <label for="born-year" class="ssa-input-label">Year you were born</label>
+               <input type="number" id="born-year" class="ssa-input born-year" min="1940" required>
+           </div>
+           <div class="ssa-input-container">
+               <label for="retire-year" class="ssa-input-label">Year you want to retire</label>
+               <input type="number" id="retire-year" class="ssa-input retire-year" min="2022" required>
+           </div>
+           <div class="ssa-input-container">
+               <label for="work-years" class="ssa-input-label">Total Years Worked</label>
+               <input type="number" id="work-years" class="ssa-input work-years" min="1" required>
+           </div>
+           <div class="ssa-input-container">
+               <label for="average-income" class="ssa-input-label">Average Yearly Income</label>
+               <input type="number" id="average-income" class="ssa-input average-income" min="1" required>
+           </div>
+      </div>
+      <button id="calculate-btn" class="calculate-btn">Calculate</button>
+      <div id="result-container" class="result-container">
+           <p class="result-note">Estimated monthly Social Security benefit:</p>
+           <p id="result" class="result"></p>
+      </div>
+</div>
+```
+
+```css
+/* CSS */
+.ssa-calculator-container {
+    max-width: 400px;
+    margin: 2em auto;
+    padding: 1em;
+    background: #c9e9ff;
+    border-radius: 10px;
+}
+
+.ssa-calculator-title {
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.ssa-calculator-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.ssa-input-container {
+    width: 45%;
+    margin-top: 1em;
+}
+
+.ssa-input-label {
+    display: block;
+    margin-bottom: .5em;
+}
+
+.ssa-input {
+    width: 100%;
+    padding: .5em;
+}
+
+.calculate-btn {
+    display: block;
+    margin-top: 2em;
+    width: 100%;
+    padding: .5em;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+}
+
+.result-container {
+    margin-top: 1.5em;
+    border-top: 1px solid gray;
+    padding-top: 1em;
+    display: none;
+}
+
+.result-note, .result {
+    text-align: center;
+    margin-bottom: .5em;
+}
+
+.result {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+```
+
+```javascript
+// JavaScript
+document.getElementById('calculate-btn').addEventListener('click', calculateSSB);
+
+function calculateSSB() {
+    let bornYear = parseInt(document.getElementById('born-year').value);
+    let retireYear = parseInt(document.getElementById('retire-year').value);
+    let totalWorkYears = parseInt(document.getElementById('work-years').value);
+    let averageIncome = parseInt(document.getElementById('average-income').value);
+    let retirementAge = retireYear - bornYear;
+    let adjustedIncome = (averageIncome * totalWorkYears) / 420;
+    let estimatedMonthlyBenefit;
+    if (retirementAge < 62) {
+        estimatedMonthlyBenefit = adjustedIncome * 0.7;
+    } else if (retirementAge >= 62 && retirementAge < 67) {
+        estimatedMonthlyBenefit = adjustedIncome;
+    } else {
+        estimatedMonthlyBenefit = adjustedIncome * 1.32;
+    }
+    document.getElementById('result').innerText = `$${estimatedMonthlyBenefit.toFixed(2)}`;
+    document.getElementById('result-container').style.display = 'block';
+}
+```

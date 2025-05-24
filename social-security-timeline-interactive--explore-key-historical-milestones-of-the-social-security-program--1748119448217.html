@@ -1,0 +1,554 @@
+<!-- Social Security Timeline Interactive Widget -->
+<div id="ss-timeline-widget" class="ss-widget-container">
+  <div class="ss-timeline-header">
+    <h2>Explore Social Security's Journey</h2>
+    <p class="ss-subtitle">Trace pivotal milestones, engage with key facts, and see how sustainability challenges evolved.</p>
+  </div>
+  <div class="ss-timeline-body">
+    <div class="ss-timeline">
+      <!-- Timeline steps dynamically loaded -->
+    </div>
+    <div class="ss-timeline-details">
+      <div class="ss-timeline-detail-content">
+        <!-- Dynamic content here -->
+      </div>
+      <div class="ss-timeline-actions">
+        <button class="ss-prev-step ss-btn" disabled>&larr; Previous</button>
+        <div class="ss-progress-bar">
+          <div class="ss-progress"></div>
+        </div>
+        <button class="ss-next-step ss-btn">Next &rarr;</button>
+      </div>
+    </div>
+  </div>
+  <div class="ss-timeline-conclusion" style="display:none;">
+    <h3>You've completed the timeline!</h3>
+    <p>
+      Social Security has evolved dramatically since 1935. Sustainability challenges persist, underlining the importance of being informed and engaged. 
+    </p>
+    <div class="ss-summary-quiz">
+      <h4>Interactive Quiz: What Did You Learn?</h4>
+      <div class="ss-quiz-question"></div>
+      <div class="ss-quiz-options"></div>
+      <div class="ss-quiz-feedback"></div>
+    </div>
+    <button class="ss-restart-btn ss-btn">Restart Timeline</button>
+  </div>
+</div>
+
+<style>
+#ss-timeline-widget.ss-widget-container {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f9fafc;
+  color: #253045;
+  max-width: 740px;
+  margin: 30px auto;
+  border-radius: 18px;
+  box-shadow: 0 6px 32px rgba(24,42,99,0.10), 0 1px 3px rgba(25,50,95,0.09);
+  overflow: hidden;
+  padding-bottom: 32px;
+}
+.ss-timeline-header {
+  padding: 28px 32px 12px 32px;
+  background: linear-gradient(96deg, #6a99d1 0%, #bed8fb 75%);
+  color: #fff;
+  text-align: center;
+}
+.ss-timeline-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.ss-timeline-header .ss-subtitle {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 400;
+}
+
+.ss-timeline-body {
+  display: flex;
+  flex-flow: row;
+  padding: 10px 20px 0 20px;
+  gap: 32px;
+}
+.ss-timeline {
+  flex: 0 0 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position:relative;
+  min-height: 430px;
+}
+.ss-timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  z-index: 2;
+  margin-bottom: 34px;
+  transition: transform 0.18s;
+}
+.ss-timeline-step:last-child {
+  margin-bottom: 0;
+}
+.ss-timeline-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #d6e7fa;
+  border: 3px solid #6a99d1;
+  margin-bottom: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #3163a9;
+  font-size: 1.10rem;
+  transition: background 0.22s, border 0.18s, transform 0.15s;
+}
+.ss-timeline-step.active .ss-timeline-dot {
+  background: linear-gradient(99deg, #709cf4 45%, #d6e7fa 150%);
+  border: 3px solid #3163a9;
+  color: #fff;
+  transform: scale(1.10);
+  box-shadow: 0 1px 12px rgba(78,111,219,0.16);
+}
+.ss-timeline-step.completed .ss-timeline-dot {
+  background: #709cf4;
+  border: 3px solid #a0bed8;
+  color: #fff;
+}
+.ss-timeline-label {
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 4px;
+  color: #395274;
+  max-width: 96px;
+  opacity: 0.77;
+}
+.ss-timeline-line {
+  width: 6px;
+  flex: 1 1;
+  background: linear-gradient(180deg, #c5daf4 60%, #bed8fb 100%);
+  margin: 0 auto;
+  border-radius: 6px;
+  z-index: 1;
+  position: absolute;
+  top: 35px;
+  left: 42px;
+  right: 0;
+  bottom: 13px;
+}
+
+.ss-timeline-details {
+  flex: 1 1 0%;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 3px 12px -4px #b7c7eb47;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 0 0;
+  margin-top: 12px;
+}
+.ss-timeline-detail-content {
+  flex: 1 1 0%;
+  padding: 36px 26px 12px 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: fadeIn 0.48s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(28px);}
+  to { opacity: 1; transform: none;}
+}
+.ss-timeline-detail-content h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.36rem;
+  font-weight: 700;
+  color: #234a83;
+}
+.ss-timeline-detail-content .ss-step-date {
+  display: inline-block;
+  font-size: 1.02rem;
+  color: #4b649c;
+  background: #e1ecf8;
+  border-radius: 5px;
+  padding: 1.5px 8px 0 8px;
+  margin-bottom: 14px;
+}
+.ss-timeline-detail-content .ss-step-body {
+  font-size: 1.065rem;
+  color: #32507e;
+  line-height: 1.65;
+  margin-bottom: 13px;
+}
+.ss-timeline-detail-content .ss-extra-fact {
+  display: block;
+  background: #f6f8fa;
+  padding: 8px 18px;
+  border-left: 5px solid #6a99d1;
+  border-radius: 6px;
+  font-size: 0.98rem;
+  color: #1e4178;
+  box-shadow: 0 1px 4px -2px #93afde1c;
+  margin-top: 8px;
+  opacity: 0.92;
+}
+.ss-timeline-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px 18px 20px;
+  margin-top: 10px;
+  background: #f5faff;
+  border-radius: 0 0 18px 18px;
+  gap: 9px;
+}
+.ss-btn {
+  font-family: inherit;
+  font-size: 1.08rem;
+  color: #fff;
+  background: linear-gradient(90deg,#6a99d1 55%, #416dc4 120%);
+  border: none;
+  border-radius: 5px;
+  padding: 8px 18px 8px 18px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 1px 8px -4px #89a5c9;
+  transition: background 0.16s, color 0.17s;
+  outline: none;
+}
+.ss-btn:disabled {
+  background: #d2dbe8!important;
+  color: #6882a3!important;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.ss-progress-bar {
+  flex: 1 1 0%;
+  background: #d5e5fa;
+  height: 9px;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 0 18px;
+  min-width: 90px;
+  max-width: 170px;
+  position: relative;
+}
+.ss-progress-bar .ss-progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg,#6a99d1 38%, #416dc4 100%);
+  border-radius: 5px;
+  transition: width 0.40s cubic-bezier(.77,0,.18,1);
+}
+
+.ss-timeline-conclusion {
+  padding: 30px;
+  text-align: center;
+}
+.ss-timeline-conclusion h3 {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #3163a9;
+  margin-bottom: 9px;
+}
+.ss-summary-quiz {
+  background: #f2f6fd;
+  border-radius: 13px;
+  margin: 19px auto 9px auto;
+  padding: 22px 14px 18px 14px;
+  max-width: 420px;
+  box-shadow: 0 0 20px -6px #b2c8e229;
+  text-align: left;
+}
+.ss-quiz-question {
+  font-size: 1.09rem;
+  font-weight: 500;
+  color: #253965;
+  margin-bottom: 8px;
+}
+.ss-quiz-options button {
+  display: block;
+  width: 100%;
+  background: #fff;
+  color: #234a83;
+  border: 1.5px solid #bdd4f9;
+  border-radius: 8px;
+  margin-bottom: 7px;
+  padding: 8px 10px;
+  font-size: 1.07rem;
+  cursor: pointer;
+  transition: background 0.12s, border 0.13s;
+}
+.ss-quiz-options button.selected {
+  background: linear-gradient(97deg,#b2cdf7 50%, #e3eeff 220%);
+  border-color: #6a99d1;
+}
+.ss-quiz-options button.correct {
+  border-color: #12b989;
+  background: #eafff6;
+  color: #00986c;
+  font-weight: 600;
+}
+.ss-quiz-options button.incorrect {
+  border-color: #df6f60;
+  background: #fff0ec;
+  color: #c03724;
+}
+
+.ss-quiz-feedback {
+  font-size: 1.04rem;
+  margin-top: 6px;
+  font-weight: 500;
+  color: #416dc4;
+  min-height: 25px;
+}
+.ss-restart-btn {
+  background: linear-gradient(95deg, #395274 60%, #6a99d1 140%);
+  margin-top: 22px;
+}
+
+@media (max-width: 699px) {
+  #ss-timeline-widget.ss-widget-container {
+    margin: 0;
+    border-radius: 0;
+    padding-bottom: 16px;
+  }
+  .ss-timeline-body { flex-direction: column; gap: 18px;}
+  .ss-timeline { min-height: 0; flex-direction: row; flex: none; justify-content:center;}
+  .ss-timeline-step { margin-bottom: 0; margin-right:33px;}
+  .ss-timeline-step:last-child { margin-right: 0;}
+  .ss-timeline-line {
+    position: absolute; left: 40px; top: 14px; right:0; height: 6px; width: auto;
+    background: linear-gradient(90deg, #c5daf4 60%, #bed8fb 100%);
+    flex: none; bottom: auto;
+  }
+}
+</style>
+
+<script>
+(function(){
+  // Timeline Milestones Data
+  const timelineSteps = [
+    {
+      year: "1935",
+      title: "Social Security Act Signed",
+      content: "During the Great Depression, President Franklin D. Roosevelt signs the Social Security Act into law. This foundational program provides federal old-age benefits to workers and sets the stage for a nationwide public safety net.",
+      fact: "By 1940, the first monthly Social Security check was issued for $22.54.",
+      icon: "📝"
+    },
+    {
+      year: "1950",
+      title: "Major Benefit Expansion",
+      content: "Major amendments expand Social Security to include many more beneficiaries, such as agricultural and domestic workers, and increase monthly payments significantly to fight growing postwar poverty.",
+      fact: "The new law increased existing benefits by an average of 77%.",
+      icon: "🧑‍🌾"
+    },
+    {
+      year: "1965",
+      title: "Medicare & Disability Added",
+      content: "Medicare and Medicaid are established as part of the Social Security Act, adding national health coverage for those over 65, and for the first time, disability payments are integrated into the program.",
+      fact: "In 1972, Supplementary Security Income (SSI) was introduced for the aged, blind, and disabled.",
+      icon: "🩺"
+    },
+    {
+      year: "1983",
+      title: "Facing Insolvency: Reforms Pass",
+      content: "With Social Security facing a cash shortage, a bipartisan commission recommends tax hikes, a gradual increase in the retirement age, and taxation of some Social Security benefits. The changes delay—but do not eliminate—future funding challenges.",
+      fact: "The retirement age began to rise incrementally toward 67.",
+      icon: "⚖️"
+    },
+    {
+      year: "2000s",
+      title: "Sustainability Concerns Grow",
+      content: "Longer lifespans, lower birth rates, and a swelling population of retirees cause concern over sustainability. Social Security outlays begin to exceed annual revenue, raising alarms about the program running deficits by the next decade.",
+      fact: "By 2010, Social Security paid out more in benefits than it collected in taxes.",
+      icon: "📉"
+    },
+    {
+      year: "Future",
+      title: "Projected Shortfall",
+      content: "Trustees predict Social Security's trust fund reserves may be depleted by the mid-2030s if no changes are made. This would result in across-the-board benefit cuts unless lawmakers take action to bolster the program's financial footing.",
+      fact: "By 2034, only 77% of scheduled benefits may be payable from payroll taxes alone.",
+      icon: "⏳"
+    }
+  ];
+
+  // Quiz Data, checkpoint to reinforce learning
+  const quizData = [
+    {
+      question: "What major event led to the creation of Social Security in 1935?",
+      options: [
+        "The Civil Rights Movement",
+        "World War II",
+        "The Great Depression",
+        "The Baby Boom"
+      ],
+      correct: 2
+    },
+    {
+      question: "When did Social Security first start paying out more in benefits than it collected in taxes?",
+      options: [
+        "1983",
+        "1950",
+        "2010",
+        "2034"
+      ],
+      correct: 2
+    },
+    {
+      question: "Which addition to Social Security created national health insurance for seniors?",
+      options: [
+        "Disability Insurance",
+        "Medicare",
+        "Supplementary Security Income",
+        "Food Stamps"
+      ],
+      correct: 1
+    }
+  ];
+  // Render Timeline Steps (dots)
+  function renderTimeline() {
+    const tl = container.querySelector('.ss-timeline');
+    tl.innerHTML = '';
+    for (let i = 0; i < timelineSteps.length; i++) {
+      const s = timelineSteps[i];
+      let stepNode = document.createElement('div');
+      stepNode.className = 'ss-timeline-step';
+      stepNode.dataset.step = i;
+      stepNode.innerHTML = `<span class="ss-timeline-dot">${s.icon}</span>
+        <div class="ss-timeline-label">${s.year}</div>`;
+      tl.appendChild(stepNode);
+    }
+    // timeline line visual
+    let line = document.createElement('div');
+    line.className = 'ss-timeline-line';
+    tl.appendChild(line);
+  }
+// Render Timeline Detail for current step
+  function renderStepDetail(idx){
+    const step = timelineSteps[idx];
+    let d = container.querySelector('.ss-timeline-detail-content');
+    d.classList.remove('active-animation');
+    setTimeout(()=>{
+      d.innerHTML = `
+        <span class="ss-step-date">${step.year}</span>
+        <h3>${step.title}</h3>
+        <div class="ss-step-body">${step.content}</div>
+        <div class="ss-extra-fact"><b>Did you know?</b> ${step.fact}</div>
+      `;
+      d.classList.add('active-animation');
+    }, 80);
+  }
+// Animate/Update Timeline Dots & Progress
+  function highlightTimeline(idx){
+    const steps = Array.from(container.querySelectorAll('.ss-timeline-step'));
+    steps.forEach((el, k) => {
+      el.classList.toggle('active', k === idx);
+      el.classList.toggle('completed', k < idx);
+    });
+    // Progress bar
+    const progress = container.querySelector('.ss-progress');
+    progress.style.width = Math.round(((idx+1)/timelineSteps.length)*100) + '%';
+  }
+  // Step Button Logic
+  function updateActions(idx) {
+    container.querySelector('.ss-prev-step').disabled = idx === 0;
+    container.querySelector('.ss-next-step').disabled = idx === timelineSteps.length-1;
+  }
+  // Timeline Step Click Handler
+  function onStepClick(e) {
+    const idx = Number(e.currentTarget.dataset.step);
+    goToStep(idx);
+  }
+  // Main State
+  let currentStep = 0;
+  // Navigation
+  function goToStep(idx){
+    currentStep = idx;
+    renderStepDetail(currentStep);
+    highlightTimeline(currentStep);
+    updateActions(currentStep);
+  }
+  // Next/Prev Logic
+  function nextStep(){
+    if(currentStep < timelineSteps.length-1){
+      goToStep(currentStep+1);
+    }else{
+      showConclusion();
+    }
+  }
+  function prevStep(){
+    if(currentStep>0) goToStep(currentStep-1);
+  }
+  // Finishing
+  function showConclusion(){
+    container.querySelector('.ss-timeline-body').style.display='none';
+    container.querySelector('.ss-timeline-conclusion').style.display='block';
+    quizIdx = 0; quizScore = 0;
+    renderQuizQuestion();
+  }
+  function restart(){
+    container.querySelector('.ss-timeline-body').style.display='flex';
+    container.querySelector('.ss-timeline-conclusion').style.display='none';
+    goToStep(0);
+  }
+  // Quiz Logic
+  let quizIdx = 0, quizScore = 0;
+  function renderQuizQuestion(){
+    const qData = quizData[quizIdx];
+    const q = container.querySelector('.ss-quiz-question');
+    const opt = container.querySelector('.ss-quiz-options');
+    const feedback = container.querySelector('.ss-quiz-feedback');
+    q.innerText = qData.question;
+    opt.innerHTML = '';
+    feedback.innerHTML = '';
+    qData.options.forEach((txt, i) => {
+      let btn = document.createElement('button');
+      btn.innerText = txt;
+      btn.onclick = function() {
+        opt.querySelectorAll('button').forEach(btn2 => btn2.disabled=true);
+        btn.classList.add(i === qData.correct ? 'correct':'incorrect');
+        if(i===qData.correct){
+          feedback.innerHTML = '<span style="color:#1ea36e;">✔️ Correct!<span>';
+          quizScore++;
+        }else{
+          feedback.innerHTML = '<span style="color:#ce3d2d;">✖️ Incorrect.</span> The correct answer: '+qData.options[qData.correct];
+        }
+        setTimeout(()=>{
+          quizIdx++;
+          if(quizIdx < quizData.length) renderQuizQuestion();
+          else {
+            feedback.innerHTML= `<br><b>Your Score: ${quizScore}/${quizData.length}</b><br>${
+              quizScore===quizData.length
+                ? "<span style='color:#11bb7b;'>Excellent! You know the history of Social Security well.</span>"
+                : "Thanks for participating! Brush up on any details you missed."
+            }`;
+            opt.innerHTML="";
+          }
+        },700 + (i===qData.correct?180:0));
+      };
+      opt.appendChild(btn);
+    });
+  }
+  // Setup
+  const container = document.getElementById('ss-timeline-widget');
+  renderTimeline();
+  goToStep(0); // Initial state
+  // Events for timeline
+  Array.from(container.querySelectorAll('.ss-timeline-step')).forEach(el=>{
+    el.addEventListener('click', onStepClick);
+  });
+  container.querySelector('.ss-next-step').onclick = function(){
+    if(currentStep < timelineSteps.length-1) nextStep();
+    else showConclusion();
+  };
+  container.querySelector('.ss-prev-step').onclick = prevStep;
+  container.querySelector('.ss-restart-btn').onclick = restart;
+})();
+</script>

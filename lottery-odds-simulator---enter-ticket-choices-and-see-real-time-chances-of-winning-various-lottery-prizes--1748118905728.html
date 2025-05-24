@@ -1,0 +1,562 @@
+<!-- LOTTERY ODDS SIMULATOR WIDGET -->
+
+<div id="lottery-simulator" class="ls-container">
+  <h2 class="ls-title">🎰 Lottery Odds Simulator</h2>
+  <p class="ls-subtitle">
+    Enter your ticket selections and discover your real-time odds of winning—see how the game is stacked!
+  </p>
+  <form id="ls-form" autocomplete="off">
+    <div class="ls-step" id="ls-step-1">
+      <label for="ls-game" class="ls-label">Select Lottery Game:</label>
+      <select id="ls-game" name="game" class="ls-select">
+        <option value="powerball">USA Powerball (5/69 + 1/26)</option>
+        <option value="megamillions">Mega Millions (5/70 + 1/25)</option>
+        <option value="euroMillions">EuroMillions (5/50 + 2/12)</option>
+        <option value="custom">Custom Setup…</option>
+      </select>
+      <div id="ls-custom-settings" class="ls-custom" style="display:none;">
+        <div class="ls-custom-row">
+          <label>Numbers to Pick:</label> <input type="number" min="1" max="10" id="ls-custom-pick-main" value="5">
+          <span>/</span>
+          <input type="number" min="2" max="90" id="ls-custom-pool-main" value="50">
+        </div>
+        <div class="ls-custom-row">
+          <label>Bonus Balls?:</label>
+          <input type="checkbox" id="ls-custom-has-bonus">
+          <span class="ls-bonus-settings" style="display:none;">
+            <input type="number" min="1" max="5" id="ls-custom-pick-bonus" value="2">
+            <span>/</span>
+            <input type="number" min="2" max="90" id="ls-custom-pool-bonus" value="12">
+          </span>
+        </div>
+      </div>
+      <button type="button" class="ls-btn ls-next" id="ls-next-step-1">Next &rarr;</button>
+    </div>
+    <div class="ls-step" id="ls-step-2" style="display:none;">
+      <div id="ls-user-picks"></div>
+      <button type="button" class="ls-btn ls-back" id="ls-back-step-2">&larr; Back</button>
+      <button type="button" class="ls-btn ls-next" id="ls-next-step-2" style="float:right;">See My Odds!</button>
+    </div>
+    <div class="ls-step" id="ls-step-3" style="display:none;">
+      <div class="ls-odds-results">
+        <h3>Your Odds per Prize Tier:</h3>
+        <div id="ls-odds-table"></div>
+        <div id="ls-chance-visual"></div>
+      </div>
+      <button type="button" class="ls-btn ls-back" id="ls-back-step-3">&larr; Back</button>
+    </div>
+  </form>
+  <div class="ls-footer">
+    <small>
+      This tool is for educational purposes – see for yourself why playing the lottery is rarely a winning proposition.
+    </small>
+  </div>
+</div>
+
+
+
+
+<style>
+#lottery-simulator.ls-container {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: #f8faff;
+  border: 2px solid #e4e8f0;
+  border-radius: 14px;
+  max-width: 500px;
+  margin: 30px auto 40px;
+  padding: 30px 26px 18px;
+  box-shadow: 0 8px 30px rgba(55,80,90, 0.11);
+  color: #182233;
+  position: relative;
+  animation: ls-fade-in 0.7s cubic-bezier(.38,1.13,.53,1.1);
+}
+
+@keyframes ls-fade-in { from { opacity: 0; transform: translateY(35px);} to {opacity: 1; transform: none;} }
+
+.ls-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-bottom: 4px;
+  color: #24499b;
+  text-align: center;
+}
+.ls-subtitle {
+  color: #5173c1;
+  font-size: 1.05rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.ls-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+.ls-select {
+  padding: 8px 10px 8px 6px;
+  border: 1px solid #d6dee7;
+  border-radius: 7px;
+  font-size: 1.02rem;
+  width:100%;
+  margin-bottom: 10px;
+  background:#fff;
+  transition: border 0.1s;
+}
+.ls-btn {
+  background: linear-gradient(90deg,#5884ee 0,#458ee5 100%);
+  color: #fff;
+  border-radius: 8px;
+  border: none;
+  padding: 10px 22px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  font-size: 1.03rem;
+  margin: 24px 0 5px 0;
+  transition: background 150ms, box-shadow 150ms, color 150ms;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(46,70,120,0.09);
+}
+.ls-btn.ls-back {
+  background: #e9eefd;
+  color: #204885;
+}
+.ls-btn:active { transform: scale(0.97);}
+.ls-btn:hover:not(.ls-back) { background:linear-gradient(90deg,#3172d8 0,#2452aa 100%);}
+.ls-btn.ls-back:hover { background:#d5e2fe;}
+.ls-step { min-height: 85px;}
+.ls-custom { margin: 18px 3px 0 0;}
+.ls-custom-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px;}
+.ls-custom-row label { min-width:110px; font-weight:500;}
+.ls-custom-row input[type="number"] { width:48px; padding:5px 3px; border-radius:5px; border:1px solid #c2cbe0; font-size:1rem;}
+.ls-custom-row input[type="checkbox"] { margin-top:3px;}
+
+.ls-user-picks-table {
+  background: #f4f7fa;
+  border-radius: 9px;
+  padding: 13px 10px 13px 22px;
+  margin-bottom: 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ls-pick-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2px;
+  gap: 18px;
+}
+.ls-pick-label { font-weight:500; color:#446abb;}
+.ls-user-number {
+  display:inline-block;
+  width:34px; height:34px; margin-right:7px;
+  text-align:center; line-height:34px;
+  background:#fff;
+  border-radius: 17px;
+  border:1.5px solid #a4b8d6;
+  font-size:1.2rem;
+  font-weight: 600;
+  cursor:pointer;
+  color: #20446e;
+  margin-bottom: 5px;
+  transition: background .15s, color .15s, border .13s;
+}
+.ls-user-number.ls-selected {
+  background:linear-gradient(90deg,#4e7be5 20%,#82aaff 100%);
+  color:#fff;
+  border:1.5px solid #4171e3;
+  box-shadow: 0 2px 9px 0 rgba(67,121,243,0.13);
+}
+.ls-user-number.ls-disabled {
+  opacity:0.35;
+  pointer-events:none;
+}
+.ls-user-error {
+  color:#b22121;
+  background:#fff4f4;
+  border-radius:6px;
+  font-size:0.97rem;
+  padding:5px 9px;
+  margin-bottom: 6px;
+  border:1.2px solid #eba7a7;
+  text-align: center;
+}
+
+.ls-odds-results {
+  min-height:160px;
+}
+#ls-odds-table {
+  margin: 5px 0 17px;
+}
+.ls-odds-table-main {
+  width: 100%;
+  border-collapse:collapse;
+}
+.ls-odds-table-main th, .ls-odds-table-main td {
+  padding:8px 8px 7px 8px;
+  text-align:center;
+}
+.ls-odds-table-main th {
+  background: #e7f0fb;
+  color: #274a94;
+  font-weight:700;
+  border-radius: 6px 6px 0 0;
+}
+.ls-odds-table-main tr:nth-child(even) td {
+  background: #f9fbfc;
+}
+.ls-odds-table-tier {font-size:1.09rem; font-weight:500; color:#29457e;}
+.ls-odds-table-odds {font-family:monospace; font-size:1.02rem;}
+.ls-odds-table-chance {color: #1c8039; font-weight:500;}
+.ls-odds-table-chance.ls-tiny { color:#d64828; }
+#ls-chance-visual { margin: 9px 0 7px;}
+.ls-bar-visual {
+  display: flex;
+  align-items: flex-end;
+  height: 38px;
+  gap: 7px;
+}
+.ls-bar {
+  border-radius: 4px 4px 0 0;
+  transition: height .5s cubic-bezier(.4,1.2,.39,.95), background 0.23s;
+  min-width: 28px;
+  position: relative;
+}
+.ls-bar-label {
+  font-size:0.94rem;
+  color:#3a4868;
+  font-weight:500;
+  margin-top:3px;
+  text-align:center;
+}
+.ls-footer {
+  margin-top:16px;
+  text-align:center;
+  color:#9aa9c4;
+  font-size:0.93rem;
+}
+@media (max-width:600px) {
+  #lottery-simulator.ls-container {padding:16px 2vw 9px;}
+  .ls-title {font-size:1.3rem;}
+}
+</style>
+
+
+
+<script>
+// ======= LOTTERY ODDS SIMULATOR BEGIN =======
+
+// Possible games' configurations
+const LS_GAMES = {
+  'powerball': {
+    name: 'USA Powerball',
+    mainPick: 5,
+    mainPool: 69,
+    bonusPick: 1,
+    bonusPool: 26,
+    bonusCount: 1,
+    bonusName: 'Powerball',
+    prizeTiers: [
+      {tier:'Jackpot', main:5, bonus:1},
+      {tier:'$1M', main:5, bonus:0},
+      {tier:'$50K', main:4, bonus:1},
+      {tier:'$100', main:4, bonus:0},
+      {tier:'$100', main:3, bonus:1},
+      {tier:'$7', main:3, bonus:0},
+      {tier:'$7', main:2, bonus:1},
+      {tier:'$4', main:1, bonus:1},
+      {tier:'$4', main:0, bonus:1}
+    ]
+  },
+  'megamillions': {
+    name: 'Mega Millions',
+    mainPick: 5,
+    mainPool: 70,
+    bonusPick: 1,
+    bonusPool: 25,
+    bonusCount: 1,
+    bonusName: 'Mega Ball',
+    prizeTiers: [
+      {tier:'Jackpot', main:5, bonus:1},
+      {tier:'$1M', main:5, bonus:0},
+      {tier:'$10K', main:4, bonus:1},
+      {tier:'$500', main:4, bonus:0},
+      {tier:'$200', main:3, bonus:1},
+      {tier:'$10', main:3, bonus:0},
+      {tier:'$10', main:2, bonus:1},
+      {tier:'$4', main:1, bonus:1},
+      {tier:'$2', main:0, bonus:1}
+    ]
+  },
+  'euroMillions': {
+    name: 'EuroMillions',
+    mainPick: 5,
+    mainPool: 50,
+    bonusPick: 2,
+    bonusPool: 12,
+    bonusCount: 2,
+    bonusName: 'Lucky Stars',
+    // Only some tiers for simplicity
+    prizeTiers: [
+      {tier:'Jackpot', main:5, bonus:2},
+      {tier:'~$500K', main:5, bonus:1},
+      {tier:'~$160K', main:5, bonus:0},
+      {tier:'~$4K', main:4, bonus:2},
+      {tier:'~$200', main:4, bonus:1},
+      {tier:'~$130', main:4, bonus:0},
+      {tier:'~$60', main:3, bonus:2},
+      {tier:'~$10', main:2, bonus:2}
+    ]
+  }
+};
+
+// Elements refs
+const LS = {};
+['form','step-1','step-2','step-3','game','custom-settings','custom-pick-main','custom-pool-main',
+  'custom-has-bonus','custom-pick-bonus','custom-pool-bonus','user-picks','odds-table','chance-visual'
+].forEach(id=>LS[id.replace(/-/g,"_")]=document.getElementById('ls-'+id));
+const lsNext1=document.getElementById('ls-next-step-1'), lsBack2=document.getElementById('ls-back-step-2'), lsNext2=document.getElementById('ls-next-step-2'), lsBack3=document.getElementById('ls-back-step-3');
+
+// ========== STEP 1: Choose game & (if needed) custom
+function toggleCustomSettings() {
+  if(LS.game.value==='custom'){
+    LS.custom_settings.style.display='block';
+  } else { LS.custom_settings.style.display='none'; }
+}
+LS.game.addEventListener('change', toggleCustomSettings);
+LS.custom_has_bonus.addEventListener('change', function() {
+  const show = LS.custom_has_bonus.checked;
+  var el = LS.custom_settings.querySelector('.ls-bonus-settings');
+  if(show){el.style.display='inline-flex';}
+  else{el.style.display='none';}
+});
+
+lsNext1.addEventListener('click', function(){
+  // Validate custom config if needed, then move to next step
+  let cfg;
+  if(LS.game.value==='custom') {
+    const pick=parseInt(LS.custom_pick_main.value), pool=parseInt(LS.custom_pool_main.value);
+    let bonusPick=0, bonusPool=0, bonusCount=0, bonusName='Bonus', showError=null;
+    if(isNaN(pick)||isNaN(pool)||pick<1||pool<=pick) showError='Check main numbers.';
+    if(LS.custom_has_bonus.checked) {
+      bonusPick = parseInt(LS.custom_pick_bonus.value)||1;
+      bonusPool = parseInt(LS.custom_pool_bonus.value)||2;
+      bonusCount=bonusPick;
+      if(bonusPick<1||bonusPool<bonusPick) showError='Check bonus numbers.';
+    }
+    if(showError){showLSError(LS.step_1, showError);return;}
+    cfg = {
+      name:'Custom Game',
+      mainPick: pick,
+      mainPool: pool,
+      bonusPick: bonusPick,
+      bonusPool: bonusPool,
+      bonusCount: bonusCount,
+      bonusName: 'Bonus',
+      prizeTiers: getCustomPrizeTiers(pick, bonusPick)
+    };
+  } else {
+    cfg = LS_GAMES[LS.game.value];
+  }
+  LS.step_1.style.display='none';
+  buildNumberPickUI(cfg);
+  LS.step_2.style.display='';
+  LS._cfg=cfg;
+  hideLSError();
+});
+
+// ==========================
+// Helper: Get prize tiers for custom game
+function getCustomPrizeTiers(mainPick, bonusPick){
+  // Show some tiers: all +bonus, all no bonus, 1 less main + all bonus, 1 less main + no bonus, 2 main + bonus, 0+bonus etc.
+  let arr=[];
+  if(mainPick>1)
+    arr.push({tier:'Jackpot',main:mainPick,bonus:bonusPick});
+  if(mainPick>0)
+    arr.push({tier:'2nd',main:mainPick,bonus:0});
+  if(mainPick>2 && bonusPick)
+    arr.push({tier:'3rd',main:mainPick-1,bonus:bonusPick});
+  if(mainPick>2)
+    arr.push({tier:'4th',main:mainPick-1,bonus:0});
+  if(bonusPick>0 && mainPick>2)
+    arr.push({tier:'5th',main:2,bonus:bonusPick});
+  if(bonusPick>0)
+    arr.push({tier:'Consolation',main:0,bonus:bonusPick});
+  return arr;
+}
+
+// ========== Show error below current step
+function showLSError(el, msg){
+  let e=el.querySelector('.ls-user-error');
+  if(!e){e=document.createElement('div');e.className='ls-user-error';el.insertBefore(e,el.firstChild);}
+  e.textContent=msg;
+}
+function hideLSError(){
+  document.querySelectorAll('.ls-user-error').forEach(x=>x.remove());
+}
+
+// ========== STEP 2: Pick numbers
+function buildNumberPickUI(cfg){
+  LS.user_picks.innerHTML='';
+  let t=document.createElement('div');
+  t.className='ls-user-picks-table';
+  // Main numbers
+  t.appendChild(buildNumberPickRow(cfg.mainPick,cfg.mainPool,'Main Numbers',false));
+  // Bonus numbers
+  if(cfg.bonusCount&&cfg.bonusPick&&cfg.bonusPool)
+    t.appendChild(buildNumberPickRow(cfg.bonusPick,cfg.bonusPool,cfg.bonusName,true));
+  LS.user_picks.appendChild(t);
+}
+
+function buildNumberPickRow(pick,pool,label,isBonus){
+  let r=document.createElement('div'), nums=[], selected=[];
+  r.className='ls-pick-row';
+  r.setAttribute('data-pick',pick);
+  r.setAttribute('data-pool',pool);
+  r.setAttribute('data-label',label);
+  r.setAttribute('data-bonus',isBonus?'1':'0');
+  let l=document.createElement('span');
+  l.className='ls-pick-label';
+  l.textContent=label+':';
+  r.appendChild(l);
+  let nwrap=document.createElement('div');
+  for(let i=1;i<=pool;i++){
+    let s=document.createElement('span');
+    s.className='ls-user-number';
+    s.textContent=i;
+    s.setAttribute('data-num',i);
+    s.addEventListener('click',function(){
+      if(s.classList.contains('ls-selected')){
+        s.classList.remove('ls-selected');
+        selected.splice(selected.indexOf(i),1);
+      }else{
+        if(selected.length<pick){
+          s.classList.add('ls-selected');
+          selected.push(i);
+        }
+      }
+      // Disable rest if needed
+      const ns=nwrap.querySelectorAll('.ls-user-number:not(.ls-selected)');
+      if(selected.length>=pick)
+        ns.forEach(x=>x.classList.add('ls-disabled'));
+      else
+        ns.forEach(x=>x.classList.remove('ls-disabled'));
+    });
+    nwrap.appendChild(s);
+  }
+  r.appendChild(nwrap);
+  return r;
+}
+
+// ========== Next/back from Pick UI
+lsBack2.addEventListener('click',function(){
+  LS.step_2.style.display='none';
+  LS.step_1.style.display='';
+  hideLSError();
+});
+lsNext2.addEventListener('click',function(){
+  // Validate user picks
+  const rows = LS.user_picks.querySelectorAll('.ls-pick-row');
+  let picks=[], labels=[];
+  for(let row of rows){
+    const pick=parseInt(row.getAttribute('data-pick'));
+    const label=row.getAttribute('data-label');
+    const selected=Array.from(row.querySelectorAll('.ls-user-number.ls-selected'))
+                    .map(x=>parseInt(x.getAttribute('data-num')));
+    if(selected.length!==pick){
+      showLSError(LS.step_2,`Select exactly ${pick} ${label}`);
+      return;
+    }
+    picks.push(selected);
+    labels.push(label);
+  }
+  LS._userPicks = picks;
+  LS.step_2.style.display='none';
+  runOddsCalculation();
+  LS.step_3.style.display='';
+  hideLSError();
+});
+
+// ========== STEP 3: Show odds
+lsBack3.addEventListener('click',function(){
+  LS.step_3.style.display='none';
+  LS.step_2.style.display='';
+  hideLSError();
+});
+
+// ----- MAIN ODDS CALCULATION -----
+function runOddsCalculation(){
+  const cfg=LS._cfg;
+  // Number of possible tickets
+  const totalComb = nCk(cfg.mainPool,cfg.mainPick) * (cfg.bonusPick ? nCk(cfg.bonusPool,cfg.bonusPick):1);
+  // For each tier, calculate how many tickets would win that tier
+  let tableHtml = `<table class="ls-odds-table-main">
+    <tr><th>Prize Tier</th><th>Match</th><th>Odds</th><th>1-in-??</th><th>Percentage</th></tr>`;
+  let bestChance=0, bars=[], highlight=0;
+  for(let i=0;i<cfg.prizeTiers.length;i++){
+    let tier=cfg.prizeTiers[i];
+    // Number of ways to match x main & y bonus
+    let winComb = nCk(cfg.mainPick,tier.main) * nCk(cfg.mainPool-cfg.mainPick, cfg.mainPick-tier.main);
+    if(cfg.bonusPick>0)
+      winComb *= nCk(cfg.bonusPick,tier.bonus) * nCk(cfg.bonusPool-cfg.bonusPick, cfg.bonusPick-tier.bonus);
+    const odds = totalComb/winComb;
+    let percent = (1/odds*100), dispPercent = percent>=1? percent.toFixed(2)+'%' : percent.toPrecision(2)+'%';
+    if(percent>bestChance){bestChance=percent;highlight=i;}
+    bars.push(percent);
+    tableHtml += `<tr${i==highlight?' style="background:#eaf58b26"':''}>
+      <td class="ls-odds-table-tier">${tier.tier}</td>
+      <td>${tier.main}${cfg.bonusPick?('+'+tier.bonus):''}</td>
+      <td class="ls-odds-table-odds">${odds>99999999?'1 in '+formatInt(odds):odds.toFixed(2)}</td>
+      <td class="ls-odds-table-odds">${format1inX(odds)}</td>
+      <td class="ls-odds-table-chance${percent<0.01?' ls-tiny':''}">${dispPercent}</td>
+    </tr>`;
+  }
+  tableHtml+='</table>';
+  LS.odds_table.innerHTML=tableHtml;
+  LS.chance_visual.innerHTML = oddsBarChart(cfg.prizeTiers, bars, highlight);
+}
+
+// ========== VISUAL: Animated horizontal bar chart
+function oddsBarChart(tiers,bars,highlight){
+  if(!bars.length) return '';
+  // Log scale
+  let max=Math.max(...bars);
+  return `<div class="ls-bar-visual">` +
+    bars.map((v,i)=>{
+      let h = 9+(v>0?Math.log10(v+1)*95/max:5);
+      let clr = i==highlight?'linear-gradient(90deg,#e3f36b 10%,#b1dd47 90%)':'#bbd6f7';
+      let txt = (v>=1)?v.toFixed(1)+'%' : (v<0.0001?'~0%':v.toPrecision(1)+'%');
+      return `<div class="ls-bar" style="height:${h}px;background:${clr};width:34px;">
+        <div class="ls-bar-label" style="color:${i==highlight?'#43600e':'#28507c'}">${txt}<div style="font-size:0.88em;margin-top:2px;">${tiers[i].tier}</div></div>
+      </div>`;
+    }).join('')
+    +`</div>`;
+}
+
+// ========== HELPER: combinatorial nCk
+function nCk(n, k) {
+  if(k==0||k==n)return 1;
+  if(k>n) return 0;
+  k = Math.min(k, n-k); let res = 1;
+  for(let i=1;i<=k;i++) res = res*(n-i+1)/i;
+  return Math.round(res);
+}
+function formatInt(x){
+  if(!x||x<1) return '1';
+  let s=Math.round(x).toLocaleString('en-US');
+  return s.length>10 ? s.substr(0,5)+'...':s;
+}
+function format1inX(x){
+  if(!x||x<=0) return 'N/A';
+  let v=Math.round(x);
+  if(v>9999999999) return '1 in '+v.toExponential(2);
+  return '1 in '+v.toLocaleString('en-US');
+}
+
+// Reset on new game
+LS.form.addEventListener('submit',e=>e.preventDefault());
+
+// =========== UI initialize =============
+toggleCustomSettings();
+
+// ======= LOTTERY ODDS SIMULATOR END =======
+</script>
